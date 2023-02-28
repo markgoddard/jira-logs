@@ -1,0 +1,3 @@
+# Format: Task,Duration(minutes),Comment,Date,Start time
+# Example: DEV-502,55,Kolla maintenance,2021-11-01,09:00
+# Lines starting with # are comments.
