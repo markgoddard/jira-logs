@@ -4,6 +4,7 @@ import argparse
 import csv
 import datetime
 import json
+import re
 import subprocess
 import sys
 
@@ -22,8 +23,12 @@ class WorkLog(object):
     def _parse_start(date, start):
         # Jira requires the following format:
         # yyyy-MM-dd'T'HH:mm:ss.SSSZ
-        dt = datetime.datetime.strptime(date + " " + start, "%Y-%m-%d %I:%M:%S %p")
-        return dt.isoformat() + ".000+0000"
+        # Convert start to timedelta
+        dt = datetime.datetime.strptime(start, "%I:%M:%S %p")
+        delta = dt - datetime.datetime(dt.year, dt.month, dt.day)
+        # Add to date
+        date += delta
+        return date.isoformat() + ".000+0000"
 
     @staticmethod
     def _parse_duration(duration):
@@ -55,26 +60,52 @@ class WorkLog(object):
             raise Exception("Unable to parse response from Jira: {output}")
 
 
-def _get_logs():
-    with open('jira-logs.csv', 'r') as f:
+def _get_logs(input_filename, month):
+    day = None
+    date = None
+    day_pattern = re.compile(r"([\d]+)[\w]+")
+    now = datetime.datetime.now()
+    with open(input_filename, 'r') as f:
         reader = csv.reader(f, delimiter=',')
         for row in reader:
+            print(row)
             if not row or row[0].startswith('#'):
                 continue
-            task, duration, comment, date, start = tuple(row)
+            if row[1] == "Start":
+                day = row[0].strip()
+                if not day:
+                    raise Exception(f"Unable to find day: {row}")
+                day = day_pattern.match(day).groups()[0]
+                day = int(day)
+                date = datetime.datetime(now.year, month, day)
+                print(f"Setting date to {date}")
+                continue
+
+            if not date:
+                raise Exception("Expected day")
+            empty, start, _, duration, comment, task = tuple(row[:6])
+            if task == "ignore":
+                continue
             log = WorkLog(task, duration, comment, date, start)
             yield log
 
 
 def _parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", default="jira-logs.csv", help="Input CSV file")
+    parser.add_argument("-m", "--month", type=int)
     parser.add_argument("-n", "--dry-run", action="store_true")
     return parser.parse_args()
 
 
 def main():
     args = _parse_args()
-    for log in _get_logs():
+    # Validate all logs first
+    for log in _get_logs(args.input, args.month):
+        pass
+
+    # Submit
+    for log in _get_logs(args.input, args.month):
         log.display()
         if not args.dry_run:
             log.submit()

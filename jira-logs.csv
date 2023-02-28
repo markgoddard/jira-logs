@@ -1,3 +1,13 @@
-# Format: Task,Duration(minutes),Comment,Date,Start time
-# Example: DEV-502,55,Kolla maintenance,2021-11-01,09:00
+# The CSV format matches the Google sheet format.
+# Each day has a heading, followed by several work logs.
+# Day heading format:
+# Day,"Start","Finish","Duration","Activity"
+# Work log format:
+# <empty>,Start time,End time,Duration,Comment,Task or "ignore"
 # Lines starting with # are comments.
+# Example:
+# 7th,Start,Finish,Duration,Activity
+#,9:00:00 AM,9:30:00 AM,0:30:00,emails,ignore
+#,9:30:00 AM,12:30:00 PM,3:00:00,RUG NGS batching,BT-314
+## This is a comment
+#,1:10:00 PM,2:40:00 PM,1:30:00,RUG NGS batching,BT-314
