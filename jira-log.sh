@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Adapted from https://gist.github.com/patrick-blom/593dd02338490941f4ba09f714e821c3
+
 # Example:
 # ./jira-log.sh -i SHPC-2377 -t 165 -c "Ansible error handling" -s '2021-11-09T11:00:00.000+0000'
 
