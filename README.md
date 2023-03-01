@@ -14,6 +14,8 @@ Log entries into a spreadsheet, with the following format:
 	13:00:00 PM	17:00:00 PM	4:00:00		Afternoon task	JIRA-456
 ```
 
+A template work log in Google Sheets is available [here](https://docs.google.com/spreadsheets/d/1SiIWsMwz4xZgtgDISr6TVy1xZ66eLzjQeRDgsE4W0A8/edit).
+
 Download the sheet as a CSV file to `jira-logs.csv`, then run `jira-log.py -m <month number>`
 
 To use a different CSV filename, use `--input`.
