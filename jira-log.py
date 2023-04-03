@@ -9,6 +9,9 @@ import subprocess
 import sys
 
 
+MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+
+
 class WorkLog(object):
 
     def __init__(self, task, duration, comment, date, start):
@@ -93,19 +96,21 @@ def _get_logs(input_filename, month):
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default="jira-logs.csv", help="Input CSV file")
-    parser.add_argument("-m", "--month", type=int)
+    parser.add_argument("-m", "--month", type=str, required=True, choices=MONTHS)
     parser.add_argument("-n", "--dry-run", action="store_true")
     return parser.parse_args()
 
 
 def main():
     args = _parse_args()
+    month = MONTHS.index(args.month) + 1
+
     # Validate all logs first
-    for log in _get_logs(args.input, args.month):
+    for log in _get_logs(args.input, month):
         pass
 
     # Submit
-    for log in _get_logs(args.input, args.month):
+    for log in _get_logs(args.input, month):
         log.display()
         if not args.dry_run:
             log.submit()
