@@ -63,6 +63,14 @@ class WorkLog(object):
             raise Exception("Unable to parse response from Jira: {output}")
 
 
+def _skip_row(row):
+    return (not row or
+            not any(row) or
+            row[0].startswith('#') or
+            row[0] == 'Total' or
+            row == ['', '', '', '0:00:00', '', '', ''])
+
+
 def _get_logs(input_filename, month):
     day = None
     date = None
@@ -72,7 +80,7 @@ def _get_logs(input_filename, month):
         reader = csv.reader(f, delimiter=',')
         for row in reader:
             print(row)
-            if not row or row[0].startswith('#'):
+            if _skip_row(row):
                 continue
             if row[1] == "Start":
                 day = row[0].strip()
