@@ -64,11 +64,14 @@ class WorkLog(object):
 
 
 def _skip_row(row):
+    def non_zero_duration(value):
+        # Ignore lines with only a zero duration
+        return value != '0:00:00'
+
     return (not row or
-            not any(row) or
+            not any(filter(non_zero_duration, row)) or
             row[0].startswith('#') or
-            row[0] == 'Total' or
-            row == ['', '', '', '0:00:00', '', '', ''])
+            row[0] == 'Total')
 
 
 def _get_logs(input_filename, month):
