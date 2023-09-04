@@ -21,3 +21,8 @@ Download the sheet as a CSV file to `jira-logs.csv`, then run `jira-log.py -m <m
 To use a different CSV filename, use `--input`.
 
 To perform a dry run, use `--dry-run`.
+
+### Deleting logs
+Sometimes you make a mistake. It's OK, we've all been there.
+
+If you've done something wrong whilst uploading your logs (e.g. wrong month, wrong ticket, wrong career), the output of your previous job is stored in `output.log` - so don't delete this. You can run `jira-delete.sh` to remove any worklogs in this file from jira. 

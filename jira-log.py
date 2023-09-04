@@ -7,10 +7,31 @@ import json
 import re
 import subprocess
 import sys
+import logging
+import os
 
+# Check if the 'output' file exists in the current directory
+if os.path.exists('output.log'):
+    # Rename the existing 'output' file to 'output-old'
+    os.rename('output.log', 'output-old.log')
+
+# create logger
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+
+# add ch to logger
+logger.addHandler(ch)
+
+#log to file 
+fh = logging.FileHandler(r'output.log')
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
 
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
-
 
 class WorkLog(object):
 
@@ -43,7 +64,7 @@ class WorkLog(object):
         return int(delta.total_seconds() / 60)
 
     def display(self):
-        print(f"{self.task} {self.duration_m}m @ {self.start}: {self.comment}")
+        logging.info(f"{self.task} {self.duration_m}m @ {self.start}: {self.comment}")
 
     def submit(self):
         cmd = f"./jira-log.sh -i {self.task} -t {self.duration_m} -c \"{self.comment}\" -s \"{self.start}\""
@@ -51,14 +72,14 @@ class WorkLog(object):
             output = subprocess.check_output(cmd, shell=True,
                     stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
-            print(f"{e.cmd} exited {e.returncode} stdout: {e.output} stderr: {e.stderr}")
+            logging.error(f"{e.cmd} exited {e.returncode} stdout: {e.output} stderr: {e.stderr}")
             raise
 
         output = json.loads(output)
         if "errors" in output or "errorMessages" in output:
             raise Exception(f"Failed to submit work log: {output}")
         elif "self" in output:
-            print(f"{output['self']}")
+            logging.info(f"{output['self']}")
         else:
             raise Exception("Unable to parse response from Jira: {output}")
 
@@ -82,7 +103,7 @@ def _get_logs(input_filename, month):
     with open(input_filename, 'r') as f:
         reader = csv.reader(f, delimiter=',')
         for row in reader:
-            print(row)
+            logging.info(row)
             if _skip_row(row):
                 continue
             if row[1] == "Start":
@@ -92,7 +113,7 @@ def _get_logs(input_filename, month):
                 day = day_pattern.match(day).groups()[0]
                 day = int(day)
                 date = datetime.datetime(now.year, month, day)
-                print(f"Setting date to {date}")
+                logging.info(f"Setting date to {date}")
                 continue
 
             if not date:
