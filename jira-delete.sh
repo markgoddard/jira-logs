@@ -2,9 +2,16 @@
 set -eu 
 
 #####configuration
-jiraUser="tyler@stackhpc.com"
 jiraDomain="https://stackhpc.atlassian.net"
 #####configuration
+
+if [[ -f ~/.jira-user ]]; then
+        jiraUser=$(cat ~/.jira-user)
+else
+    if [ -z "$jiraUser" ]; then
+    	read -p "Enter Username: " jiraUser
+    fi
+fi
 
 if [[ -f ~/.jira-api-token ]]; then
         jiraPswd=$(cat ~/.jira-api-token)
