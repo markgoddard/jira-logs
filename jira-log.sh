@@ -21,7 +21,6 @@ set -e
 #worklog -i SCRUM-42 -t 15 -c "Daily Scrum" 
 
 #####configuration
-jiraUser="mark@stackhpc.com"
 jiraDomain="https://stackhpc.atlassian.net"
 #####configuration
 
@@ -68,8 +67,12 @@ if [[ -z "$issue" || -z "$timeInSeconds" || -z "$comment" ]]; then
         exit 1
 fi
 
-if [ -z "$jiraUser" ]; then
+if [[ -f ~/.jira-user ]]; then
+        jiraUser=$(cat ~/.jira-user)
+else
+    if [ -z "$jiraUser" ]; then
         read -p "Enter Username: " jiraUser
+    fi
 fi
 
 if [[ -f ~/.jira-api-token ]]; then
