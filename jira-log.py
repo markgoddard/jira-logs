@@ -62,7 +62,9 @@ class WorkLog(object):
         return int(delta.total_seconds() / 60)
 
     def display(self):
-        logging.info(f"{self.task} {self.duration_m}m @ {self.start}: {self.comment}")
+        yellow = "\x1b[33;20m"
+        reset = "\x1b[0m"
+        logging.info(f"{yellow}{self.task} {self.duration_m}m @ {self.start}: {self.comment}{reset}")
 
     def submit(self):
         cmd = f"./jira-log.sh -i {self.task} -t {self.duration_m} -c \"{self.comment}\" -s \"{self.start}\""
