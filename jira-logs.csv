@@ -1,13 +1,17 @@
 # The CSV format matches the Google sheet format.
 # Each day has a heading, followed by several work logs.
 # Day heading format:
-# Day,"Start","Finish","Duration","Activity","Task"
+#   Date,"Start","Finish","Duration","Activity","Task"
+# Date format:
+#   Day/Month
+#   Example (7th November):
+#     7/11
 # Work log format:
-# <empty>,Start time,End time,Duration,Activity,Task or "ignore"
-# Lines starting with # are comments.
-# Example:
-# 7th,Start,Finish,Duration,Activity,Task
-#,9:00:00 AM,9:30:00 AM,0:30:00,emails,ignore
-#,9:30:00 AM,12:30:00 PM,3:00:00,RUG NGS batching,BT-314
-## This is a comment
-#,1:10:00 PM,2:40:00 PM,1:30:00,RUG NGS batching,BT-314
+#   <empty>,Start time,End time,Duration,Activity,Task or "ignore"
+#   Lines starting with # are comments.
+#   Example:
+#     7/11,Start,Finish,Duration,Activity,Task
+#    ,9:00:00 AM,9:30:00 AM,0:30:00,emails,ignore
+#    ,9:30:00 AM,12:30:00 PM,3:00:00,RUG NGS batching,BT-314
+#    # This is a comment
+#    ,1:10:00 PM,2:40:00 PM,1:30:00,RUG NGS batching,BT-314
