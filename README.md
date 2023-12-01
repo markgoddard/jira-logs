@@ -5,18 +5,18 @@ Script to upload work logs to Jira.
 Log entries into a spreadsheet, with the following format:
 
 ```
-1st	Start		Finish		Duration	Activity	Task
+29/11	Start		Finish		Duration	Activity	Task
 	9:00:00 AM	12:30:00 PM	3:30:00		Morning task	JIRA-123
 	13:00:00 PM	17:00:00 PM	4:00:00		Afternoon task	JIRA-456
 
-2nd	Start		Finish		Duration	Activity	Task
+30/11	Start		Finish		Duration	Activity	Task
 	9:00:00 AM	12:30:00 PM	3:30:00		Morning task	JIRA-123
 	13:00:00 PM	17:00:00 PM	4:00:00		Afternoon task	JIRA-456
 ```
 
 A template work log in Google Sheets is available [here](https://docs.google.com/spreadsheets/d/1SiIWsMwz4xZgtgDISr6TVy1xZ66eLzjQeRDgsE4W0A8/edit).
 
-Download the sheet as a CSV file to `jira-logs.csv`, then run `jira-log.py -m <month number>`
+Download the sheet as a CSV file to `jira-logs.csv`, then run `jira-log.py [-y <year>]`
 
 To use a different CSV filename, use `--input`.
 

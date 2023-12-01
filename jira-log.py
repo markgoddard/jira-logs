@@ -31,8 +31,6 @@ fh = logging.FileHandler(r'output.log')
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
-MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
-
 class WorkLog(object):
 
     def __init__(self, task, duration, comment, date, start):
@@ -64,7 +62,9 @@ class WorkLog(object):
         return int(delta.total_seconds() / 60)
 
     def display(self):
-        logging.info(f"{self.task} {self.duration_m}m @ {self.start}: {self.comment}")
+        yellow = "\x1b[33;20m"
+        reset = "\x1b[0m"
+        logging.info(f"{yellow}{self.task} {self.duration_m}m @ {self.start}: {self.comment}{reset}")
 
     def submit(self):
         cmd = f"./jira-log.sh -i {self.task} -t {self.duration_m} -c \"{self.comment}\" -s \"{self.start}\""
@@ -95,10 +95,11 @@ def _skip_row(row):
             row[0] == 'Total')
 
 
-def _get_logs(input_filename, month):
+def _get_logs(input_filename, year):
     day = None
     date = None
-    day_pattern = re.compile(r"([\d]+)[\w]+")
+    # Format: day/month
+    date_pattern = re.compile(r"([\d]+)/([\d]+)")
     now = datetime.datetime.now()
     with open(input_filename, 'r') as f:
         reader = csv.reader(f, delimiter=',')
@@ -110,9 +111,10 @@ def _get_logs(input_filename, month):
                 day = row[0].strip()
                 if not day:
                     raise Exception(f"Unable to find day: {row}")
-                day = day_pattern.match(day).groups()[0]
-                day = int(day)
-                date = datetime.datetime(now.year, month, day)
+                groups = date_pattern.match(day).groups()
+                day = int(groups[0])
+                month = int(groups[1])
+                date = datetime.datetime(year, month, day)
                 logging.info(f"Setting date to {date}")
                 continue
 
@@ -128,21 +130,20 @@ def _get_logs(input_filename, month):
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default="jira-logs.csv", help="Input CSV file")
-    parser.add_argument("-m", "--month", type=str, required=True, choices=MONTHS)
+    parser.add_argument("-y", "--year", type=int, default=datetime.date.today().year)
     parser.add_argument("-n", "--dry-run", action="store_true")
     return parser.parse_args()
 
 
 def main():
     args = _parse_args()
-    month = MONTHS.index(args.month) + 1
 
     # Validate all logs first
-    for log in _get_logs(args.input, month):
+    for log in _get_logs(args.input, args.year):
         pass
 
     # Submit
-    for log in _get_logs(args.input, month):
+    for log in _get_logs(args.input, args.year):
         log.display()
         if not args.dry_run:
             log.submit()
